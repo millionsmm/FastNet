@@ -1,5 +1,7 @@
 package vpour.fastnet;
 
+import android.support.annotation.NonNull;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -13,6 +15,33 @@ import java.util.Map;
  */
 
 public abstract class Request<T> implements Comparable<Request<T>> {
+    //Http请求方法枚举，这里我们只有GET,POST,PUT,DELETE四种
+    public static enum HttpMethod {
+        GET("GET"),
+        POST("POST"),
+        PUT("PUT"),
+        DELETE("DELETE");
+
+        // http request type
+        private String mHttpMethod = "";
+
+        private HttpMethod(String method) {
+            mHttpMethod = method;
+        }
+
+        @Override
+        public String toString() {
+            return mHttpMethod;
+        }
+    }
+
+    //优先级枚举
+    public static enum Priority {
+        Low,
+        NORMAL,
+        HIGH,
+        IMMEDIATE
+    }
     //默认的编码方式
     private static final String DEFAULT_PARAMS_ENCODING = "UTF-8";
     //请求序列号
@@ -99,6 +128,12 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     }
 
+    //用于对请求的排序处理，根据优先级和加入到队列的序号进行排序
+    @Override
+    public int compareTo(@NonNull Request<T> another) {
+
+        return 0;
+    }
 
     public static interface RequestListener<T> {
         //请求完成的回调
@@ -106,31 +141,5 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
 
-    //Http请求方法枚举，这里我们只有GET,POST,PUT,DELETE四种
-    public static enum HttpMethod {
-        GET("GET"),
-        POST("POST"),
-        PUT("PUT"),
-        DELETE("DELETE");
 
-        // http request type
-        private String mHttpMethod = "";
-
-        private HttpMethod(String method) {
-            mHttpMethod = method;
-        }
-
-        @Override
-        public String toString() {
-            return mHttpMethod;
-        }
-    }
-
-    //优先级枚举
-    public static enum Priority {
-        Low,
-        NORMAL,
-        HIGH,
-        IMMEDIATE
-    }
 }
