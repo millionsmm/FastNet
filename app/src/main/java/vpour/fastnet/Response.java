@@ -13,4 +13,8 @@ public class Response {
     public String getMessage() {
         return null;
     }
+
+    public char[] getRawData() {
+        return new char[0];
+    }
 }
