@@ -42,6 +42,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
         HIGH,
         IMMEDIATE
     }
+
     //默认的编码方式
     private static final String DEFAULT_PARAMS_ENCODING = "UTF-8";
     //请求序列号
@@ -88,27 +89,16 @@ public abstract class Request<T> implements Comparable<Request<T>> {
         }
     }
 
-    protected String getParamsEncoding() {
-        return DEFAULT_PARAMS_ENCODING;
-    }
-
-    public String getBodyContentType() {
-        return "application/x-www-form-urlencoded; charset=" + getParamsEncoding();
-    }
 
     //返回POST或PUT请求时body参数字节数组
     public byte[] getBody() {
-        Map<String, String> params = getParams();
+        Map<String, String> params = getBodyParams();
         if (params != null && params.size() > 0) {
-            return encodeParameters(params, getParamsEncoding());
+            return encodeParameters(params, getDefaultParamsEncoding());
         }
         return null;
     }
 
-    private Map<String, String> getParams() {
-        //TODO
-        return null;
-    }
 
     //将参数转换为URL编码的参数串，格式为key1=value1&key2=value2
     private byte[] encodeParameters(Map<String, String> params, String paramsEncoding) {
@@ -131,28 +121,102 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     //用于对请求的排序处理，根据优先级和加入到队列的序号进行排序
     @Override
     public int compareTo(@NonNull Request<T> another) {
-        Priority myPriority=this.getPriority();
-        Priority anotherPriority=another.getPriority();
+        Priority myPriority = this.getPriority();
+        Priority anotherPriority = another.getPriority();
         //如果优先级相等，那么按照添加到队列的序列号顺序来执行
-        return myPriority.equals(anotherPriority)?this.getSerialNumber() -another.getSerialNumber()
-                :myPriority.ordinal()-anotherPriority.ordinal();
+        return myPriority.equals(anotherPriority) ? this.getSerialNum() - another.getSerialNum()
+                : myPriority.ordinal() - anotherPriority.ordinal();
     }
-    //得到请求序号
-    private int getSerialNumber() {
-        return 0;
-    }
-    //得到请求优先级
-    private Priority getPriority() {
-        return null;
-    }
+
 
     /**
      * 网络请求Listener，会被执行在UI线程
+     *
      * @param <T> 请求的Response类型
      */
     public static interface RequestListener<T> {
         //请求完成的回调
         public void onComplete(int stCode, T response, String errMsg);
+    }
+
+    public static String getDefaultParamsEncoding() {
+        return DEFAULT_PARAMS_ENCODING;
+    }
+
+    public int getSerialNum() {
+        return mSerialNum;
+    }
+
+    public void setSerialNum(int serialNum) {
+        mSerialNum = serialNum;
+    }
+
+    public Priority getPriority() {
+        return mPriority;
+    }
+
+    public void setPriority(Priority priority) {
+        mPriority = priority;
+    }
+
+    public boolean isCancel() {
+        return isCancel;
+    }
+
+    public void setCancel(boolean cancel) {
+        isCancel = cancel;
+    }
+
+    public boolean isShouldCache() {
+        return mShouldCache;
+    }
+
+    public void setShouldCache(boolean shouldCache) {
+        mShouldCache = shouldCache;
+    }
+
+    public RequestListener<T> getRequestListener() {
+        return mRequestListener;
+    }
+
+    public void setRequestListener(RequestListener<T> requestListener) {
+        mRequestListener = requestListener;
+    }
+
+    public String getUrl() {
+        return mUrl;
+    }
+
+    public void setUrl(String url) {
+        mUrl = url;
+    }
+
+    public HttpMethod getHttpMethod() {
+        return mHttpMethod;
+    }
+
+    public void setHttpMethod(HttpMethod httpMethod) {
+        mHttpMethod = httpMethod;
+    }
+
+    public Map<String, String> getHeaders() {
+        return mHeaders;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        mHeaders = headers;
+    }
+
+    public Map<String, String> getBodyParams() {
+        return mBodyParams;
+    }
+
+    public void setBodyParams(Map<String, String> bodyParams) {
+        mBodyParams = bodyParams;
+    }
+
+    public String getBodyContentType() {
+        return "application/x-www-form-urlencoded; charset=" + getDefaultParamsEncoding();
     }
 
 
