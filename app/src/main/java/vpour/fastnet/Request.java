@@ -32,6 +32,16 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     //请求参数
     private Map<String, String> mBodyParams = new HashMap<>();
 
+    /**
+     * @param requestListener 请求回调，将请求回调给客户
+     * @param url 请求的目标url
+     * @param httpMethod 请求方式
+     */
+    public Request(RequestListener<T> requestListener, String url, HttpMethod httpMethod) {
+        mRequestListener = requestListener;
+        mUrl = url;
+        mHttpMethod = httpMethod;
+    }
 
     public static interface RequestListener<T> {
         //请求完成的回调
