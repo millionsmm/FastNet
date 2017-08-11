@@ -1,5 +1,7 @@
 package vpour.fastnet;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +58,47 @@ public abstract class Request<T> implements Comparable<Request<T>> {
             mRequestListener.onComplete(stCode, result, msg);
         }
     }
+
+    protected String getParamsEncoding() {
+        return DEFAULT_PARAMS_ENCODING;
+    }
+
+    public String getBodyContentType() {
+        return "application/x-www-form-urlencoded; charset=" + getParamsEncoding();
+    }
+
+    //返回POST或PUT请求时body参数字节数组
+    public byte[] getBody() {
+        Map<String, String> params = getParams();
+        if (params != null && params.size() > 0) {
+            return encodeParameters(params, getParamsEncoding());
+        }
+        return null;
+    }
+
+    private Map<String, String> getParams() {
+        //TODO
+        return null;
+    }
+
+    //将参数转换为URL编码的参数串，格式为key1=value1&key2=value2
+    private byte[] encodeParameters(Map<String, String> params, String paramsEncoding) {
+        StringBuilder encodedParams;
+        try {
+            encodedParams = new StringBuilder();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                encodedParams.append(URLEncoder.encode(entry.getKey(), paramsEncoding));
+                encodedParams.append('=');
+                encodedParams.append(URLEncoder.encode(entry.getValue(), paramsEncoding));
+                encodedParams.append('&');
+            }
+            return encodedParams.toString().getBytes(paramsEncoding);
+        } catch (UnsupportedEncodingException uee) {
+            throw new RuntimeException("Encoding not supported: " + paramsEncoding, uee);
+        }
+
+    }
+
 
     public static interface RequestListener<T> {
         //请求完成的回调
