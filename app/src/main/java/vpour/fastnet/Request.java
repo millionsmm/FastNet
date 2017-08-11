@@ -131,10 +131,25 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     //用于对请求的排序处理，根据优先级和加入到队列的序号进行排序
     @Override
     public int compareTo(@NonNull Request<T> another) {
-
+        Priority myPriority=this.getPriority();
+        Priority anotherPriority=another.getPriority();
+        //如果优先级相等，那么按照添加到队列的序列号顺序来执行
+        return myPriority.equals(anotherPriority)?this.getSerialNumber() -another.getSerialNumber()
+                :myPriority.ordinal()-anotherPriority.ordinal();
+    }
+    //得到请求序号
+    private int getSerialNumber() {
         return 0;
     }
+    //得到请求优先级
+    private Priority getPriority() {
+        return null;
+    }
 
+    /**
+     * 网络请求Listener，会被执行在UI线程
+     * @param <T> 请求的Response类型
+     */
     public static interface RequestListener<T> {
         //请求完成的回调
         public void onComplete(int stCode, T response, String errMsg);
