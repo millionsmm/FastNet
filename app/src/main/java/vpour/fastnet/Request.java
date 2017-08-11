@@ -34,24 +34,26 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * @param requestListener 请求回调，将请求回调给客户
-     * @param url 请求的目标url
-     * @param httpMethod 请求方式
+     * @param url             请求的目标url
+     * @param httpMethod      请求方式
      */
     public Request(RequestListener<T> requestListener, String url, HttpMethod httpMethod) {
         mRequestListener = requestListener;
         mUrl = url;
         mHttpMethod = httpMethod;
     }
+
     //从原生的网络请求中解析结果，子类必须覆写
     public abstract T parseResponse(Response response);
+
     //处理Response，该方法需要运行在UI线程
-    public final void deliveryResponse(Response response){
+    public final void deliveryResponse(Response response) {
         //解析得到请求结果
-        T result=parseResponse(response);
-        if (mRequestListener!=null){
-            int stCode=response!=null?response.getStatusCode():-1;
-            String msg=response!=null?response.getMessage():"unknown error";
-            mRequestListener.onComplete(stCode,result,msg);
+        T result = parseResponse(response);
+        if (mRequestListener != null) {
+            int stCode = response != null ? response.getStatusCode() : -1;
+            String msg = response != null ? response.getMessage() : "unknown error";
+            mRequestListener.onComplete(stCode, result, msg);
         }
     }
 
