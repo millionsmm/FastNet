@@ -1,8 +1,16 @@
 package vpour.fastnet;
 
 /**
- * Created by Administrator on 2017/8/11 0011.
+ *  响应类
  */
 
 public class Response {
+    public int getStatusCode() {
+        return 0;
+    }
+
+
+    public String getMessage() {
+        return null;
+    }
 }
